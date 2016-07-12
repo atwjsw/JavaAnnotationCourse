@@ -1,0 +1,66 @@
+一、JDK中的注解
+@Override
+@Deprecated
+@SuppressWarnings
+
+二、常见的第三方注解
+Spring:
+@Autowired
+@Service
+@Repository
+
+Mybatis
+@InsertProvider
+@UpdateProvider
+@Options
+
+通过Autowired可以省略大量但代码和XML配置文件
+
+三、注解的分类
+
+按照运行机制来分
+1）源码注解： 注解只在源码里面存在，编译成.class文件就不存在了。
+2） 编译时注解：在class文件里面仍存在，例如JDK中的注解@Override，@Deprecated，@SuppressWarnings。
+只在编译时起作用，作用是告诉编译器进行编译检查。
+3）运行时注解：在运行阶段还会起作用，甚至影响运行逻辑，例如@Autowired注解会在运行时把成员变量自动注入。
+
+按注解来源分：
+1）JDK自带的
+2）来自第三方的（我们接触的大多数注解是这类）
+3）自定义的
+
+元注解：注解的注解
+
+四、自定义注解
+1）自定义注解的语法要求
+- 使用@interface关键字定义注解 public @interface Description
+- 成员以无参无异常方式声明 String desc();
+- 可以用default为成员指定默认值 int age() default 18;
+- 成员类型是受限的，合法的类型包括原始类型及String,Class,Annotation, Enumeration.
+- 如果注解只有一个成员，则成员名必须为value(), 在使用时可以忽略成员名和赋值号（=）。
+- 注解类可以没有成员，没有成员的注解称为标识注解
+
+2） 注解的注解（元注解）
+@Target(ElementType.METHOD)：注解的作用域（CONSTRUCTOR,FIELD,LOCAL_VARIABLES,METHOD,PACKAGE,PARAMETER,TYPE)
+几乎包含了JAVA所有的元素
+@Retention(RetentionPolicy.RUNTIME): 生命周期作用范围（SOURCE,CLASS,RUNTIME) 
+@Inherited 允许子类继承注解
+@Documented 生成Javadoc时会包含注解信息
+
+3）使用自定义注解
+@<注解名>(<成员名1>=<成员值1>,<成员名2>=<成员值2>,...>
+例如： @Description（desc="I am eyeColor, author="mooc boy", age=18)
+
+4）解析注解
+概念：通过反射获取类、函数或成员上的运行时注解信息，从而实现动态控制程序运行的逻辑。
+
+五、注解实战
+项目说明：项目取自一个公司的持久层框架，用来代替Hibernate的解决方案，核心代码就是通过注解来实现的。
+需求：
+1. 有一张用户表，字段包括用户ID，用户名，昵称，年龄，性别，所在城市，邮箱，手机号。
+2. 方便对每个字段或字段组合条件进行检索，并打印出SQL。
+3. 使用方式要足够简单，见代码示例。
+
+注解主要是做什么的？
+感觉annotation就是给你需要的类、field，method之类的加上元信息，这样你方便你自己parse。个人比较喜欢把custom annotation跟Spring的@Component一起使用，这样在spring bootstrap的时候可以通过applicationContext.getBeansWithAnnotation(YourCustomAnnontation.class);
+直接拿需要的annotation class（Bean），很方便， 可以做很多事情。
